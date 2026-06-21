@@ -76,6 +76,12 @@ jobs:
           JSON_URL=$(echo "$JSON" | jq -r '.tanyue_kn.json_url')
           NOW=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
 
+          # 请求 json_url 获取 date 字段
+          DATE=$(curl -s "$JSON_URL" | jq -r '.date // "未知"')
+          if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
+            DATE="未知"
+          fi
+
           # 生成 Markdown 内容
           cat << 'EOF' > issue_body.md
           # `$VERSION`
@@ -96,6 +102,7 @@ jobs:
           | **MD5** | `$MD5` |
           | **ZIP 下载** | [下载]($ZIP_URL) |
           | **内部文件校验** | [查看]($JSON_URL) |
+          | **发布日期** | $DATE |
           EOF
 
           # 将占位符替换为实际值（使用 sed）
@@ -107,6 +114,7 @@ jobs:
           sed -i "s|\$MD5|$MD5|g" issue_body.md
           sed -i "s|\$ZIP_URL|$ZIP_URL|g" issue_body.md
           sed -i "s|\$JSON_URL|$JSON_URL|g" issue_body.md
+          sed -i "s|\$DATE|$DATE|g" issue_body.md
 
           echo "Markdown issue body generated."
           cat issue_body.md
