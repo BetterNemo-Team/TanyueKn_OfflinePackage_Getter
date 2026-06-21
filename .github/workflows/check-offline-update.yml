@@ -8,28 +8,29 @@ on:
 jobs:
   check-update:
     runs-on: ubuntu-latest
-    # 不需要全局权限，直接用 PAT
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT }}   # 用 PAT 检出，后续推送也用这个身份
+          token: ${{ secrets.PAT }}   # 使用 PAT 进行认证
 
       - name: Fetch API and extract version
         id: fetch
         run: |
           API_URL="https://api-creation.codemao.cn/common/config/offline-package-search?project_name=tanyue_kn&env=production"
           RESPONSE=$(curl -s "$API_URL")
-          echo "$RESPONSE" | jq .
+          echo "$RESPONSE" | jq .  # 打印原始响应，便于调试
+
           VERSION=$(echo "$RESPONSE" | jq -r '.tanyue_kn.version')
           if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
             echo "Failed to extract version"
             exit 1
           fi
-          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "$RESPONSE" > api_response.json
+          # 将整个 JSON 响应保存为环境变量，供后续步骤使用
+          echo "API_RESPONSE=$RESPONSE" >> $GITHUB_ENV
 
       - name: Compare version
         id: compare
@@ -37,7 +38,7 @@ jobs:
           VERSION_FILE=".github/last_version.txt"
           NEW_VERSION="${{ steps.fetch.outputs.version }}"
           if [ ! -f "$VERSION_FILE" ]; then
-            echo "No previous version, treating as update."
+            echo "No previous version found, treating as update."
             echo "update=true" >> $GITHUB_OUTPUT
           else
             OLD_VERSION=$(cat "$VERSION_FILE")
@@ -60,11 +61,61 @@ jobs:
           git commit -m "Update tanyue_kn version to ${{ steps.fetch.outputs.version }}"
           git push
 
+      - name: Generate beautiful Markdown issue body
+        if: steps.compare.outputs.update == 'true'
+        id: markdown
+        run: |
+          # 使用 jq 从 API 响应中提取字段
+          JSON="${{ env.API_RESPONSE }}"
+          PROJECT_NAME=$(echo "$JSON" | jq -r '.tanyue_kn.project_name')
+          ENV=$(echo "$JSON" | jq -r '.tanyue_kn.env')
+          ENV_TAG=$(echo "$JSON" | jq -r '.tanyue_kn.env_tag')
+          VERSION=$(echo "$JSON" | jq -r '.tanyue_kn.version')
+          MD5=$(echo "$JSON" | jq -r '.tanyue_kn.md5')
+          ZIP_URL=$(echo "$JSON" | jq -r '.tanyue_kn.zip_url')
+          JSON_URL=$(echo "$JSON" | jq -r '.tanyue_kn.json_url')
+          NOW=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+
+          # 生成 Markdown 内容
+          cat << 'EOF' > issue_body.md
+          # `$VERSION`
+
+          > 此 Issue 由 **GitHub Actions 自动创建**，请勿手动修改。  
+          > 检测时间：$NOW
+
+          ---
+
+          ## 📦 离线包信息
+
+          | 属性 | 值 |
+          |------|----|
+          | **项目名称** | `$PROJECT_NAME` |
+          | **环境** | `$ENV` |
+          | **环境标签** | `$ENV_TAG` |
+          | **版本号** | `$VERSION` |
+          | **MD5** | `$MD5` |
+          | **ZIP 下载** | [下载]($ZIP_URL) |
+          | **内部文件校验** | [查看]($JSON_URL) |
+          EOF
+
+          # 将占位符替换为实际值（使用 sed）
+          sed -i "s|\$NOW|$NOW|g" issue_body.md
+          sed -i "s|\$PROJECT_NAME|$PROJECT_NAME|g" issue_body.md
+          sed -i "s|\$ENV|$ENV|g" issue_body.md
+          sed -i "s|\$ENV_TAG|${ENV_TAG:-无}|g" issue_body.md
+          sed -i "s|\$VERSION|$VERSION|g" issue_body.md
+          sed -i "s|\$MD5|$MD5|g" issue_body.md
+          sed -i "s|\$ZIP_URL|$ZIP_URL|g" issue_body.md
+          sed -i "s|\$JSON_URL|$JSON_URL|g" issue_body.md
+
+          echo "Markdown issue body generated."
+          cat issue_body.md
+
       - name: Create update issue
         if: steps.compare.outputs.update == 'true'
         uses: peter-evans/create-issue-from-file@v5
         with:
-          token: ${{ secrets.PAT }}   # 用 PAT 创建 Issue
-          title: "探月KN离线包更新: ${{ steps.fetch.outputs.version }}"
-          content-filepath: api_response.json
-          labels: "update,auto-generated"
+          token: ${{ secrets.PAT }}
+          title: "[自动] 探月KN离线包更新: ${{ steps.fetch.outputs.version }}"
+          content-filepath: issue_body.md
+          labels: "auto-generated,auto-submitted"
