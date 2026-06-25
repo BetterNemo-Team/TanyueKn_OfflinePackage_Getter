@@ -2,7 +2,7 @@ name: Check Offline Package Update
 
 on:
   schedule:
-    - cron: '0 4 * * *'   # 北京时间 12:00
+    - cron: '0 0,6,12,18 * * *'
   workflow_dispatch:
 
 jobs:
