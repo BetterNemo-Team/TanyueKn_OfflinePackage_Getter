@@ -1,4 +1,4 @@
-name: Check Offline Package Update
+name: 检查离线包更新
 
 on:
   schedule:
@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 检出仓库
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT }}   # 使用 PAT 进行认证
+          token: ${{ secrets.PAT }}
 
-      - name: Fetch API and extract version
+      - name: 获取 API 并提取版本号
         id: fetch
         run: |
           API_URL="https://api-creation.codemao.cn/common/config/offline-package-search?project_name=tanyue_kn&env=production"
@@ -24,48 +24,46 @@ jobs:
 
           VERSION=$(echo "$RESPONSE" | jq -r '.tanyue_kn.version')
           if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-            echo "Failed to extract version"
+            echo "无法提取版本号"
             exit 1
           fi
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          # 将整个 JSON 响应保存为环境变量，供后续步骤使用
           echo "API_RESPONSE=$RESPONSE" >> $GITHUB_ENV
 
-      - name: Compare version
+      - name: 比较版本
         id: compare
         run: |
           VERSION_FILE=".github/last_version.txt"
           NEW_VERSION="${{ steps.fetch.outputs.version }}"
           if [ ! -f "$VERSION_FILE" ]; then
-            echo "No previous version found, treating as update."
+            echo "未找到历史版本，视为更新。"
             echo "update=true" >> $GITHUB_OUTPUT
           else
             OLD_VERSION=$(cat "$VERSION_FILE")
             if [ "$NEW_VERSION" != "$OLD_VERSION" ]; then
-              echo "Version changed: $OLD_VERSION -> $NEW_VERSION"
+              echo "版本变化：$OLD_VERSION -> $NEW_VERSION"
               echo "update=true" >> $GITHUB_OUTPUT
             else
-              echo "Version unchanged. No update."
+              echo "版本未变化，无需更新。"
               echo "update=false" >> $GITHUB_OUTPUT
             fi
           fi
 
-      - name: Update version record and push
+      - name: 更新版本记录并推送
         if: steps.compare.outputs.update == 'true'
         run: |
           echo "${{ steps.fetch.outputs.version }}" > .github/last_version.txt
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/last_version.txt
-          git commit -m "Update tanyue_kn version to ${{ steps.fetch.outputs.version }}"
+          git commit -m "更新 tanyue_kn 版本到 ${{ steps.fetch.outputs.version }}"
           git push
 
-      - name: Generate beautiful Markdown issue body
+      - name: 生成精美的 Markdown Issue 正文
         if: steps.compare.outputs.update == 'true'
         id: markdown
         run: |
-          # 直接使用 API_RESPONSE 环境变量，无需再次赋值
           PROJECT_NAME=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.project_name')
           ENV=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.env')
           ENV_TAG=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.env_tag')
@@ -74,14 +72,14 @@ jobs:
           ZIP_URL=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.zip_url')
           JSON_URL=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.json_url')
           NOW=$(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')
+          echo "NOW=$NOW" >> $GITHUB_ENV
 
-          # 请求 json_url 获取 date 字段
           DATE=$(curl -s "$JSON_URL" | jq -r '.date // "未知"')
           if [ -z "$DATE" ] || [ "$DATE" = "null" ]; then
             DATE="未知"
           fi
+          echo "DATE=$DATE" >> $GITHUB_ENV
 
-          # 生成 Markdown 内容（其余不变）
           cat << 'EOF' > issue_body.md
           # `$VERSION`
 
@@ -114,10 +112,52 @@ jobs:
           sed -i "s|\$JSON_URL|$JSON_URL|g" issue_body.md
           sed -i "s|\$DATE|$DATE|g" issue_body.md
 
-          echo "Markdown issue body generated."
+          echo "Markdown Issue 正文已生成。"
           cat issue_body.md
 
-      - name: Create update issue
+      - name: 生成钉钉通知内容
+        if: steps.compare.outputs.update == 'true'
+        run: |
+          PROJECT_NAME=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.project_name')
+          ENV=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.env')
+          ENV_TAG=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.env_tag')
+          VERSION=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.version')
+          MD5=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.md5')
+          ZIP_URL=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.zip_url')
+          JSON_URL=$(echo "$API_RESPONSE" | jq -r '.tanyue_kn.json_url')
+
+          cat > dingtalk_body.md << EOF
+          # $VERSION
+
+          > 此通知由 **GitHub Actions 自动发送**  
+          > 检测时间：$NOW
+
+          - **项目名称**：$PROJECT_NAME
+          - **环境**：$ENV
+          - **环境标签**：${ENV_TAG:-无}
+          - **版本号**：$VERSION
+          - **MD5**：$MD5
+          - **ZIP 下载**：$ZIP_URL
+          - **内部文件校验**：$JSON_URL
+          - **发布日期**：$DATE
+          EOF
+
+          echo "钉钉通知内容已生成："
+          cat dingtalk_body.md
+
+      - name: 发送钉钉通知
+        if: steps.compare.outputs.update == 'true'
+        run: |
+          TITLE="${{ steps.fetch.outputs.version }}"
+          CONTENT=$(cat dingtalk_body.md)
+          jq -n --arg title "$TITLE" --arg text "$CONTENT" \
+            '{msgtype:"markdown",markdown:{title:$title,text:$text}}' > payload.json
+          curl -s -X POST "https://oapi.dingtalk.com/robot/send?access_token=${{ secrets.DING_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d @payload.json
+          echo "钉钉通知已发送。"
+
+      - name: 创建更新 Issue
         if: steps.compare.outputs.update == 'true'
         uses: peter-evans/create-issue-from-file@v5
         with:
