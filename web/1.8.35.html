@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="environment" content="__ENVIRONMENT__" />
+    <link rel="shortcut icon" href="icon.ico" />
+    <title>KN 1.8.35</title>
+    <style>
+        .loadingWrapper {
+            width: 100%;
+            height: 100%;
+            z-index: var(--z-index-init-loading, 1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #e1e9fc;
+            flex-direction: column;
+            color: #51628c;
+            font-size: 14px;
+        }
+
+        .loadingWrapper .loadingAnimation {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 16px;
+        }
+
+        .loadingWrapper .loadingAnimation img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script>!function () { "use strict"; "undefined" !== typeof window && function () { var e = 3, t = 500, r = {}; function a(a) { var n = ""; if ("SCRIPT" === a.tagName ? n = a.src : "LINK" === a.tagName && (n = a.href), n) { var o = new URL(n, window.location.href), c = o.origin + o.pathname, i = (r[c] || 0) + 1; if (r[c] = i, i > e) console.error("\u8d44\u6e90\u52a0\u8f7d\u5931\u8d25\uff0c\u5df2\u8fbe\u5230\u6700\u5927\u91cd\u8bd5\u6b21\u6570(".concat(e, "): ").concat(n)); else { var s = Math.min(i * t, 3e3); console.warn("\u8d44\u6e90\u52a0\u8f7d\u5931\u8d25\uff0c".concat(s, "ms\u540e\u8fdb\u884c\u7b2c").concat(i, "\u6b21\u91cd\u8bd5: ").concat(n)), setTimeout((function () { var e = a.parentNode; if (e) { var t = function (e, t) { try { var r = new URL(e, window.location.href); return r.searchParams.set("_retry", t.toString()), r.toString(); } catch (a) { return e + (e.includes("?") ? "&" : "?") + "_retry=" + t; } }(n, i), r = null; if ("SCRIPT" === a.tagName) { var o = document.createElement("script"); o.src = t, Array.from(a.attributes).forEach((function (e) { "src" !== e.name.toLowerCase() && o.setAttribute(e.name, e.value); })), a.hasAttribute("defer") && (o.defer = !0), a.hasAttribute("async") && (o.async = !0), r = o; } else if ("LINK" === a.tagName && "stylesheet" === a.rel) { var c = document.createElement("link"); c.rel = "stylesheet", c.href = t, Array.from(a.attributes).forEach((function (e) { "href" !== e.name.toLowerCase() && "rel" !== e.name.toLowerCase() && c.setAttribute(e.name, e.value); })), r = c; } r && e.replaceChild(r, a); } else console.error("\u65e0\u6cd5\u91cd\u8bd5\uff0c\u5143\u7d20\u5df2\u4eceDOM\u79fb\u9664: ".concat(n)); }), s); } } } window.addEventListener("error", (function (e) { var t = e.target; t && ("SCRIPT" === t.tagName || "LINK" === t.tagName && "stylesheet" === t.rel) && (e.preventDefault(), e.stopPropagation(), a(t)); }), !0); }(); }();
+    </script>
+    <script>if (typeof globalThis === 'undefined') {
+            window.globalThis = window;
+        }
+        window.__IS_MOBILE__ =
+            navigator.userAgent.match(
+                /(iPhone|iPod|Android|ios|iOS|iPad|WebOS|Symbian|Windows Phone|Phone)/i
+            ) ||
+            (/Macintosh/i.test(navigator.userAgent) &&
+                navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 1);
+        window.__IS_PC__ = !__IS_MOBILE__;
+        window.__IS_MINIPROGRAM__ =
+            window.__wxjs_environment === 'miniprogram' ||
+            /miniProgram/i.test(navigator.userAgent);
+        window.__NEKO_TIME_OBJ__ = {
+            nekoInitTime: Date.now(),
+        };
+        window.__SHOW_SDK_LOG__ = false;
+        window.__SHOW_JUDGE_BLOCK_MESSAGE__ = false;
+        window.__SDK_INITIALIZED__ = false;
+
+        function isAndroid() {
+            if (/Android/i.test(navigator.userAgent)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        function isIos13LaterIpad() {
+            return (
+                /Macintosh/i.test(navigator.userAgent) &&
+                navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 1
+            );
+        }
+        function isHuaweiM6() {
+            return /VRD-W(10|09)/.test(navigator.userAgent);
+        }
+        function isHuaweiM5() {
+            return /JDN2-AL50/.test(navigator.userAgent);
+        }
+        // 步步高S6 S5
+        function isBBKS() {
+            return /S6/.test(navigator.userAgent) || /S5/.test(navigator.userAgent);
+        }
+        function isHuaweiMatePadPro() {
+            return /HUAWEIMRX-W29/.test(navigator.userAgent);
+        }
+        function isHonorPad5() {
+            return /JDN2-W09HN/.test(navigator.userAgent);
+        }
+        function isHuaweiMatePad() {
+            return /BAH3-W59/.test(navigator.userAgent);
+        }
+        function isPad() {
+            const ua = navigator.userAgent;
+            const isFireFox = /(?:Firefox)/.test(ua);
+            return (
+                /(?:iPad|PlayBook|Pad|HarmonyNext_tablet)/.test(ua) ||
+                (isAndroid() && !/(?:Mobile)/.test(ua)) ||
+                (isFireFox && /(?:Tablet)/.test(ua)) ||
+                isIos13LaterIpad() ||
+                isHuaweiM6() ||
+                isHuaweiM5() ||
+                isHonorPad5() ||
+                isBBKS() ||
+                isHuaweiMatePadPro() ||
+                isHuaweiMatePad()
+            );
+        }
+        function isClassInIframe() {
+            return navigator.userAgent.includes('ClassIn');
+        }
+        window.__IS_PAD__ = isPad();
+        let PAD_ZOOM = window.__IS_PAD__
+            ? Number(
+                ((window.innerHeight || window.screen.height) / 768).toFixed(2)
+            )
+            : 1;
+        if (isClassInIframe() && __IS_PAD__) {
+            PAD_ZOOM = Math.max(PAD_ZOOM, 0.8);
+        }
+        window.__PAD_ZOOM__ = PAD_ZOOM;
+        window.__KIDS_ZOOM__ = 1.1;
+        console.info('PAD_ZOOM', PAD_ZOOM);
+
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            `<style>
+        :root {
+          --pad-zoom: ${PAD_ZOOM};
+        }
+        </style>`
+        );</script>
+    <script defer="defer" src="static/js/base.ff3612da.js"></script>
+    <script defer="defer" src="static/js/crc_libs.8196dbd1.js"></script>
+    <script defer="defer"
+        src="static/js/main-vendors.7c23647f.js"></script>
+    <script defer="defer" src="static/js/main.4a9f4303.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <div id="init-loading" class="loadingWrapper">
+        <div class="loadingAnimation"></div>
+        <div id="loading-text"></div>
+    </div>
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'static/css/base.f1aba849.css';
+        document.head.appendChild(link);
+    </script>
+
+
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'static/css/main.7f802898.css';
+        document.head.appendChild(link);
+    </script>
+
+</body>
+<script>!(function () {
+        if (__IS_PC__) {
+            var loadingDiv = document.querySelector(
+                '#init-loading .loadingAnimation'
+            );
+            var img = document.createElement('img');
+            img.src =
+                'loading.gif';
+            loadingDiv.appendChild(img);
+
+            var messages = {
+                'zh-cn': { 'loading.text': '正在努力加载中...' },
+                'en-us': { 'loading.text': 'Loading, please wait...' },
+                'fr-fr': {
+                    'loading.text': 'Chargement en cours, veuillez patienter...',
+                },
+            };
+            var language = localStorage.getItem('APP_LANGUAGE') || 'zh-cn';
+            document.getElementById('loading-text').innerText =
+                messages[language]['loading.text'];
+        }
+    })();</script>
+
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" style="--sider-width: 0px" data-immersive-translate-page-theme="light">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+    <meta name="environment" content="production" />
+    <link rel="shortcut icon" href="icon.ico" />
+    <title>KittenN 存档</title>
+    <link href="./static/css/base.f1aba849.css" rel="stylesheet" />
+    <link href="./static/css/home.df2a850b.css" rel="stylesheet" />
+    <style>
+        /* 保证版本容器换行与间距，不破坏原有布局 */
+        #versionContainer {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* 卡片基础宽度：大屏两列，小屏一列 */
+        #versionContainer .Create_create__Bp34W {
+            flex: 0 0 calc(50% - 10px) !important;
+            min-width: 0px !important;
+            box-sizing: border-box !important;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+    </style>
+</head>
+
+<body style="min-width: 0">
+    <div id="root" style="min-width: 0">
+        <div class="layout_layout__iYjYv">
+            <div class="Header_wrapper__2Vc9N">
+                <img style="height: 30px" src="images/title.png" alt="logo" />
+                <div class="Header_flex1__6BEpQ"></div>
+            </div>
+            <div class="layout_main__jIils" style="min-width: 0">
+                <div class="layout_content__VKmwF">
+                    <div class="MyWorks_wrapper__kO2o2 MyWorks_tabOpenCourse__LMQBq" id="HOME_WORK">
+                        <div class="MyWorks_container__-2Pj6">
+                            <div class="MyWorks_stableWrapper__2yjAP">
+                                <div class="Stable_stable__8PGyI">
+                                    <!-- 动态版本卡片容器（保持原有类名） -->
+                                    <div class="Create_creates__QyoNp" id="versionContainer">
+                                        <!-- JavaScript动态渲染 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <footer
+                            style="position: absolute;left: calc(50% - 14rem);top: calc(100% - 50px);font-size: 1.2rem;color: orange;">
+                            ⚠ 版本穿越仅用于体验，大部分联网功能无法使用
+                        </footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            // ========== 版本数据（自由增删改） ==========
+            const versions = [
+                { version: '1.8.35', url: './1.8.35.html' },
+                { version: '1.8.31', url: './1.8.31.html' },
+            ];
+
+            // 主题1（橙色，偶数索引）
+            const theme1 = {
+                cardClass: 'Create_create__Bp34W Create_create1__t-tGv',
+                bgImage: './static/media/bg1.85759ad918ac317c45ec.png',
+                addBtnSrc: 'images/orange_add_btn.png',
+                starSrc: 'images/orange_star.png',
+                radiusClass: 'Create_raduis1__yj0Q8'
+            };
+
+            // 主题2（绿色，奇数索引）
+            const theme2 = {
+                cardClass: 'Create_create__Bp34W Create_create2__L8WbH',
+                bgImage: './static/media/bg2.5ebc763e8121f8dd7db8.png',
+                addBtnSrc: 'images/green_add_btn.png',
+                starSrc: 'images/green_star.png',
+                radiusClass: 'Create_raduis2__Gw6eX'
+            };
+
+            function createVersionCard(data, index) {
+                const theme = (index % 2 === 0) ? theme1 : theme2;
+                // 始终显示星标
+                const starHTML = `<img class="Create_imgStar__N2WcD" src="${theme.starSrc}" alt="" />`;
+
+                // 使用div保持原始结构，通过onclick跳转（target="_blank"在新窗口打开）
+                return `
+                    <div class="${theme.cardClass}"
+                         style="background-image: url(${theme.bgImage});"
+                         onclick="window.open('${data.url}', '_blank', 'noopener,noreferrer')"
+                         title="打开版本 ${data.version}">
+                        <img class="Create_iconAdd__dR2Bx" src="${theme.addBtnSrc}" alt="" />
+                        <span>${data.version}</span>
+                        ${starHTML}
+                        <div class="${theme.radiusClass}"></div>
+                    </div>`;
+            }
+
+            function render() {
+                const container = document.getElementById('versionContainer');
+                if (!container) return;
+                container.innerHTML = versions.map((v, i) => createVersionCard(v, i)).join('');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', render);
+            } else {
+                render();
+            }
+        })();
+    </script>
+</body>
+
+</html>
