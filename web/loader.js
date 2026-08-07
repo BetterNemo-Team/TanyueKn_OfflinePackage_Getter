@@ -30,6 +30,7 @@ if (!window.verData[ver] || !ver)
     ver = Object.keys(window.verData)[0];
 console.log(ver);
 const { jsMain, jsVendors, jsBase, cssMain } = window.verData[ver];
+const publicPath = 'https://creation.bcmcdn.com/neko/web/release';
 document.write(`
 <!doctype html>
 <html lang="en">
@@ -168,10 +169,10 @@ document.write(`
         }
         </style>\`
         );</script>
-    <script defer="defer" src="./static/js/base.${jsBase}.js"></script>
-    <script defer="defer" src="./static/js/crc_libs.8196dbd1.js"></script>
-    <script defer="defer" src="./static/js/main-vendors.${jsVendors}.js"></script>
-    <script defer="defer" src="./static/js/main.${jsMain}.js"></script>
+    <script defer="defer" src="${publicPath}/static/js/base.${jsBase}.js"></script>
+    <script defer="defer" src="${publicPath}/static/js/crc_libs.8196dbd1.js"></script>
+    <script defer="defer" src="${publicPath}/static/js/main-vendors.${jsVendors}.js"></script>
+    <script defer="defer" src="${publicPath}/static/js/main.${jsMain}.js"></script>
 </head>
 
 <body>
@@ -183,7 +184,7 @@ document.write(`
     <script>
         var link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = './static/css/base.f1aba849.css';
+        link.href = '${publicPath}/static/css/base.f1aba849.css';
         document.head.appendChild(link);
     </script>
 
@@ -191,7 +192,7 @@ document.write(`
     <script>
         var link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = './static/css/main.${cssMain}.css';
+        link.href = '${publicPath}/static/css/main.${cssMain}.css';
         document.head.appendChild(link);
     </script>
 
