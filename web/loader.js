@@ -1,18 +1,35 @@
-const verData = {
+window.verData = {
+    '1.8.42': {
+        jsMain: '61994d9c',
+        jsVendors: '3c44d641',
+        jsBase: 'f158ddbf',
+        cssMain: '732136cb',
+    },
+    '1.8.41': {
+        jsMain: '741f2ec7',
+        jsVendors: '3c44d641',
+        jsBase: 'f158ddbf',
+        cssMain: '732136cb',
+    },
     '1.8.40': {
         jsMain: '8dd99294',
         jsVendors: '7ca84589',
+        jsBase: 'ff3612da',
         cssMain: '76c74976',
     },
     '1.8.39': {
         jsMain: 'c28ecd8a',
         jsVendors: '0fbeb19b',
+        jsBase: 'ff3612da',
         cssMain: '76c74976',
     },
 };
-const ver = new URLSearchParams(window.location.search).get('ver') || Object.keys(verData)[0];
+let ver = new URLSearchParams(window.location.search).get('ver');
+const env = new URLSearchParams(window.location.search).get('env');
+if (!window.verData[ver] || !ver)
+    ver = Object.keys(window.verData)[0];
 console.log(ver);
-const { jsMain, jsVendors, cssMain } = verData[ver];
+const { jsMain, jsVendors, jsBase, cssMain } = window.verData[ver];
 document.write(`
 <!doctype html>
 <html lang="en">
@@ -20,7 +37,7 @@ document.write(`
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="environment" content="production" />
+    <meta name="environment" content="${env || 'production'}" />
     <link rel="shortcut icon" href="/icon.ico" />
     <link rel="manifest" href="/manifest.json" />
     <title>KN ${ver}</title>
@@ -151,7 +168,7 @@ document.write(`
         }
         </style>\`
         );</script>
-    <script defer="defer" src="./static/js/base.ff3612da.js"></script>
+    <script defer="defer" src="./static/js/base.${jsBase}.js"></script>
     <script defer="defer" src="./static/js/crc_libs.8196dbd1.js"></script>
     <script defer="defer" src="./static/js/main-vendors.${jsVendors}.js"></script>
     <script defer="defer" src="./static/js/main.${jsMain}.js"></script>
