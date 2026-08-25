@@ -1,4 +1,16 @@
 window.verData = {
+    '1.8.44': {
+        jsMain: 'b2cb0b91',
+        jsVendors: '3c44d641',
+        jsBase: 'f158ddbf',
+        cssMain: 'eee5ee97',
+    },
+    '1.8.43': {
+        jsMain: '78b76173',
+        jsVendors: '3c44d641',
+        jsBase: 'f158ddbf',
+        cssMain: 'eee5ee97',
+    },
     '1.8.42': {
         jsMain: '61994d9c',
         jsVendors: '3c44d641',
