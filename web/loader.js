@@ -124,6 +124,7 @@ window.verData = verData;
 let ver = new URLSearchParams(window.location.search).get("ver");
 const env = new URLSearchParams(window.location.search).get("env");
 if (!verData[ver] || !ver) document.write('<h1>未收录的版本：' + ver);
+if (ver === '1.8.47') document.write('<h1>此版本资源已丢失！');
 console.log(ver);
 const keys = ["jsMain", "jsVendors", "jsBase", "cssMain", "cssBase"];
 for (const v of Object.keys(verData).reverse().slice(1))
