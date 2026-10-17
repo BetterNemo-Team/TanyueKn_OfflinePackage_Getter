@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <meta name="environment" content="__ENVIRONMENT__" />
+  <link rel="shortcut icon" href="./icon.ico" />
+  <link rel="manifest" href="./manifest.json" />
+  <title>KittenN</title>
+  <style>
+    .loadingWrapper {
+      width: 100%;
+      height: 100%;
+      z-index: var(--z-index-init-loading, 1);
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #e1e9fc;
+      flex-direction: column;
+      color: #51628c;
+      font-size: 14px;
+    }
+
+    .loadingWrapper .loadingAnimation {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 16px;
+    }
+
+    .loadingWrapper .loadingAnimation img {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <script></script>
+  <script>if (typeof globalThis === 'undefined') {
+      window.globalThis = window;
+    }
+    window.__IS_MOBILE__ =
+      navigator.userAgent.match(
+        /(iPhone|iPod|Android|ios|iOS|iPad|WebOS|Symbian|Windows Phone|Phone)/i
+      ) ||
+      (/Macintosh/i.test(navigator.userAgent) &&
+        navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 1);
+    window.__IS_PC__ = !__IS_MOBILE__;
+    window.__IS_MINIPROGRAM__ =
+      window.__wxjs_environment === 'miniprogram' ||
+      /miniProgram/i.test(navigator.userAgent);
+    window.__NEKO_TIME_OBJ__ = {
+      nekoInitTime: Date.now(),
+    };
+    window.__SHOW_SDK_LOG__ = false;
+    window.__SHOW_JUDGE_BLOCK_MESSAGE__ = false;
+    window.__SDK_INITIALIZED__ = false;
+
+    function isAndroid() {
+      if (/Android/i.test(navigator.userAgent)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    function isIos13LaterIpad() {
+      return (
+        /Macintosh/i.test(navigator.userAgent) &&
+        navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 1
+      );
+    }
+    function isHuaweiM6() {
+      return /VRD-W(10|09)/.test(navigator.userAgent);
+    }
+    function isHuaweiM5() {
+      return /JDN2-AL50/.test(navigator.userAgent);
+    }
+    // 步步高 S5 ~ S10
+    function isBBKS() {
+      const ua = navigator.userAgent;
+      if (/vivo|Galaxy|SM-|GT-|SAMSUNG/i.test(ua)) {
+        return false;
+      }
+      return /;\s*S(?:[5-9]|10)(?:\s+Pro)?(?:\s+Build|[);])/.test(ua);
+    }
+    function isHuaweiMatePadPro() {
+      return /HUAWEIMRX-W29/.test(navigator.userAgent);
+    }
+    function isHonorPad5() {
+      return /JDN2-W09HN/.test(navigator.userAgent);
+    }
+    function isHuaweiMatePad() {
+      return /BAH3-W59/.test(navigator.userAgent);
+    }
+    function isHarmonyPad() {
+      return (
+        /OpenHarmony/i.test(navigator.userAgent) &&
+        /Tablet/.test(navigator.userAgent)
+      );
+    }
+    function isPad() {
+      const ua = navigator.userAgent;
+      const isFireFox = /(?:Firefox)/.test(ua);
+      return (
+        /(?:iPad|PlayBook|Pad|HarmonyNext_tablet)/.test(ua) ||
+        (isAndroid() && !/(?:Mobile)/.test(ua)) ||
+        (isFireFox && /(?:Tablet)/.test(ua)) ||
+        isIos13LaterIpad() ||
+        isHuaweiM6() ||
+        isHuaweiM5() ||
+        isHonorPad5() ||
+        isBBKS() ||
+        isHuaweiMatePadPro() ||
+        isHuaweiMatePad() ||
+        isHarmonyPad()
+      );
+    }
+    function isClassInIframe() {
+      return (
+        navigator.userAgent.includes('ClassIn') ||
+        location.search.includes('classIn')
+      );
+    }
+    window.__IS_PAD__ = isPad();
+    let PAD_ZOOM = window.__IS_PAD__
+      ? Number(
+        ((window.innerHeight || window.screen.height) / 768).toFixed(2)
+      )
+      : 1;
+    if (isClassInIframe() && __IS_PAD__) {
+      PAD_ZOOM = Math.max(PAD_ZOOM, 0.8);
+    }
+    window.__PAD_ZOOM__ = PAD_ZOOM;
+    window.__KIDS_ZOOM__ = 1.1;
+    console.info('PAD_ZOOM', PAD_ZOOM);
+
+    document.head.insertAdjacentHTML(
+      'beforeend',
+      `<style>
+        :root {
+          --pad-zoom: ${PAD_ZOOM};
+        }
+        </style>`
+    );</script>
+  <script defer="defer" src="./static/js/base.dd4a65ad.js"></script>
+  <script defer="defer" src="./static/js/crc_libs.cce421af.js"></script>
+  <script defer="defer" src="./static/js/main-vendors.56ff14ba.js"></script>
+  <script defer="defer" src="./static/js/main.4423e964.js"></script>
+  <link href="./static/css/base.e8d07c1a.css" rel="stylesheet">
+  <link href="./static/css/main.a641ecdf.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="root"></div>
+  <div id="init-loading" class="loadingWrapper">
+    <div class="loadingAnimation"></div>
+    <div id="loading-text"></div>
+  </div>
+</body>
+<script>!(function () {
+    if (__IS_PC__) {
+      var loadingDiv = document.querySelector(
+        '#init-loading .loadingAnimation'
+      );
+      var img = document.createElement('img');
+      img.src =
+        'https://creation.codemao.cn/neko/web/1.2.1-production/static/media/index.17ed521b8d842d86dd5c.gif';
+      loadingDiv.appendChild(img);
+
+      var messages = {
+        'zh-cn': { 'loading.text': '正在努力加载中...' },
+        'en-us': { 'loading.text': 'Loading, please wait...' },
+        'fr-fr': {
+          'loading.text': 'Chargement en cours, veuillez patienter...',
+        },
+      };
+      var language = localStorage.getItem('APP_LANGUAGE') || 'zh-cn';
+      document.getElementById('loading-text').innerText =
+        messages[language]['loading.text'];
+    }
+  })();</script>
+
+</html>

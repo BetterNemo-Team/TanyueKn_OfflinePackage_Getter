@@ -10,7 +10,7 @@ fs.readFile("web/loader.js", "utf-8", (err, data) => {
             this.query = query;
         }
         get(key) {
-            return "1.8.39";
+            return "1.8.50";
         }
     }
     const window = { location: { search: "" } };

@@ -1,48 +1,139 @@
-window.verData = {
+const verData = {
+    '1.8.50': {
+        jsMain: '41dd84d5',
+        jsVendors: '7e269506',
+        jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '99913118',
+        cssBase: '753994c7',
+    },
+    '1.8.49': {
+        jsMain: '14802dc2',
+        jsVendors: '9b801394',
+        jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '99913118',
+        cssBase: '753994c7',
+    },
+    '1.8.48': {
+        jsMain: '32625412',
+        jsVendors: '2b386392',
+        jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '99913118',
+        cssBase: '753994c7',
+    },
+    '1.8.47': {
+        jsMain: '4423e964',
+        jsVendors: '56ff14ba',
+        jsBase: 'dd4a65ad',
+        jsCrcLibs: 'cce421af',
+        cssMain: 'a641ecdf',
+        cssBase: 'e8d07c1a',
+    },
+    '1.8.46': {
+        jsMain: '8e01572c',
+        jsVendors: 'b282e4da',
+        jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '99913118',
+        cssBase: '753994c7',
+    },
+    '1.8.45': {
+        jsMain: '22a7ea13',
+        jsVendors: '3c44d641',
+        jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '99913118',
+        cssBase: '753994c7',
+    },
     '1.8.44': {
         jsMain: 'b2cb0b91',
         jsVendors: '3c44d641',
         jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
         cssMain: 'eee5ee97',
+        cssBase: 'f1aba849',
     },
     '1.8.43': {
         jsMain: '78b76173',
         jsVendors: '3c44d641',
         jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
         cssMain: 'eee5ee97',
+        cssBase: 'f1aba849',
     },
     '1.8.42': {
         jsMain: '61994d9c',
         jsVendors: '3c44d641',
         jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
         cssMain: '732136cb',
+        cssBase: 'f1aba849',
     },
     '1.8.41': {
         jsMain: '741f2ec7',
         jsVendors: '3c44d641',
         jsBase: 'f158ddbf',
+        jsCrcLibs: '8196dbd1',
         cssMain: '732136cb',
+        cssBase: 'f1aba849',
     },
     '1.8.40': {
         jsMain: '8dd99294',
         jsVendors: '7ca84589',
         jsBase: 'ff3612da',
+        jsCrcLibs: '8196dbd1',
         cssMain: '76c74976',
+        cssBase: 'f1aba849',
     },
     '1.8.39': {
         jsMain: 'c28ecd8a',
         jsVendors: '0fbeb19b',
         jsBase: 'ff3612da',
+        jsCrcLibs: '8196dbd1',
         cssMain: '76c74976',
+        cssBase: 'f1aba849',
+    },
+    '1.8.37': {
+        jsMain: '71881ad8',
+        jsVendors: '836e5199',
+        jsBase: 'ff3612da',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '2b4792eb',
+        cssBase: 'f1aba849',
+    },
+    '1.8.35': {
+        jsMain: '4a9f4303',
+        jsVendors: '7c23647f',
+        jsBase: 'ff3612da',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '7f802898',
+        cssBase: 'f1aba849',
+    },
+    '1.8.31': {
+        jsMain: '621d3ec4',
+        jsVendors: '8fa9ba6a',
+        jsBase: 'ff3612da',
+        jsCrcLibs: '8196dbd1',
+        cssMain: '7f802898',
+        cssBase: 'f1aba849',
     },
 };
-let ver = new URLSearchParams(window.location.search).get('ver');
-const env = new URLSearchParams(window.location.search).get('env');
-if (!window.verData[ver] || !ver)
-    ver = Object.keys(window.verData)[0];
+window.verData = verData;
+let ver = new URLSearchParams(window.location.search).get("ver");
+const env = new URLSearchParams(window.location.search).get("env");
+if (!verData[ver] || !ver) document.write('<h1>未收录的版本：' + ver);
 console.log(ver);
-const { jsMain, jsVendors, jsBase, cssMain } = window.verData[ver];
-const publicPath = 'https://creation.bcmcdn.com/neko/web/release';
+const keys = ["jsMain", "jsVendors", "jsBase", "cssMain", "cssBase"];
+for (const v of Object.keys(verData).reverse().slice(1))
+    for (const key of keys) {
+        if (!verData[v][key]) {
+            verData[v][key] = verData[Object.keys(verData)[Object.keys(verData).findIndex(v) + 1]][key];
+        }
+    }
+const { jsMain, jsVendors, jsBase, cssMain, cssBase } = verData[ver];
+const publicPath = "https://creation.bcmcdn.com/neko/web/release";
 document.write(`
 <!doctype html>
 <html lang="en">
@@ -50,7 +141,7 @@ document.write(`
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-    <meta name="environment" content="${env || 'production'}" />
+    <meta name="environment" content="${env || "production"}" />
     <link rel="shortcut icon" href="/icon.ico" />
     <link rel="manifest" href="/manifest.json" />
     <title>KN ${ver}</title>
@@ -125,12 +216,22 @@ document.write(`
         function isHuaweiM5() {
             return /JDN2-AL50/.test(navigator.userAgent);
         }
-        // 步步高S6 S5
+        // 步步高 S5 ~ S10
         function isBBKS() {
-            return /S6/.test(navigator.userAgent) || /S5/.test(navigator.userAgent);
+            const ua = navigator.userAgent;
+            if (/vivo|Galaxy|SM-|GT-|SAMSUNG/i.test(ua)) {
+                return false;
+            }
+            return /;\s*S(?:[5-9]|10)(?:\s+Pro)?(?:\s+Build|[);])/.test(ua);
         }
         function isHuaweiMatePadPro() {
             return /HUAWEIMRX-W29/.test(navigator.userAgent);
+        }
+        function isHarmonyPad() {
+            return (
+                /OpenHarmony/i.test(navigator.userAgent) &&
+                /Tablet/.test(navigator.userAgent)
+            );
         }
         function isHonorPad5() {
             return /JDN2-W09HN/.test(navigator.userAgent);
@@ -151,7 +252,8 @@ document.write(`
                 isHonorPad5() ||
                 isBBKS() ||
                 isHuaweiMatePadPro() ||
-                isHuaweiMatePad()
+                isHuaweiMatePad() ||
+                isHarmonyPad()
             );
         }
         function isClassInIframe() {
@@ -196,7 +298,7 @@ document.write(`
     <script>
         var link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = '${publicPath}/static/css/base.f1aba849.css';
+        link.href = '${publicPath}/static/css/base.${cssBase}.css';
         document.head.appendChild(link);
     </script>
 
